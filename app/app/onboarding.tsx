@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HumorLevelPicker } from "../components/HumorLevelPicker";
 import { NazarIcon, SunflowerIcon } from "../components/icons/TrakyaIcons";
-import { setDefaultHumorLevel, setOnboardingDone } from "../lib/storage";
+import { getDefaultHumorLevel, setDefaultHumorLevel, setOnboardingDone } from "../lib/storage";
 import { folk, radius, spacing, typography } from "../lib/theme";
 import type { HumorLevel } from "../types/chat";
 
@@ -13,6 +13,12 @@ const mascotPhoto = require("../assets/images/mascot-hero.jpg");
 
 export default function Onboarding() {
   const [level, setLevel] = useState<HumorLevel>(2);
+
+  // Daha önce bir seviye seçilmişse (bu ekran artık her girişte gösterildiği
+  // için) o seviye seçili gelsin, kullanıcı her seferinde 2'den başlamasın.
+  useEffect(() => {
+    getDefaultHumorLevel().then(setLevel);
+  }, []);
 
   async function handleStart() {
     await setDefaultHumorLevel(level);

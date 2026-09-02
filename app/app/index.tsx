@@ -1,39 +1,13 @@
-import { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
 import { Redirect } from "expo-router";
-import { isOnboardingDone } from "../lib/storage";
-import { colors } from "../lib/theme";
 
 /**
- * Giriş kapısı: onboarding tamamlanmadıysa onboarding'e, tamamlandıysa
- * doğrudan yeni bir sohbete yönlendirir. Geçmiş sohbetlere "Geçmiş"
- * ekranından erişilir.
+ * Giriş kapısı: uygulama her açıldığında (link her tıklandığında) önce
+ * ana sayfa / mod seçim ekranına ("/onboarding") gider - kullanıcı orada
+ * mizah seviyesini (Efendi/Samimi/Kahvehane/Delirmiş Kızan) seçip
+ * "Başlayalım" ile sohbete geçer. Daha önce tamamlanmış olması bir şeyi
+ * değiştirmez; bu ekran kalıcı ana sayfa olarak kullanılıyor. Geçmiş
+ * sohbetlere "Geçmiş" ekranından erişilir.
  */
 export default function Index() {
-  const [ready, setReady] = useState(false);
-  const [needsOnboarding, setNeedsOnboarding] = useState(false);
-
-  useEffect(() => {
-    isOnboardingDone().then((done) => {
-      setNeedsOnboarding(!done);
-      setReady(true);
-    });
-  }, []);
-
-  if (!ready) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.background,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <ActivityIndicator color={colors.accent} />
-      </View>
-    );
-  }
-
-  return <Redirect href={needsOnboarding ? "/onboarding" : "/chat/new"} />;
+  return <Redirect href="/onboarding" />;
 }
