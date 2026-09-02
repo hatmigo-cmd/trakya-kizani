@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import type { ChatMessage } from "../types";
 
 /**
@@ -62,7 +62,7 @@ export const openAIService: AIService = {
         // göndermek INVALID_ARGUMENT (400) hatası veriyordu. "MINIMAL"
         // düşünmeyi mümkün olduğunca kısıp cevabı hızlandırır.
         thinkingConfig: {
-          thinkingLevel: "MINIMAL",
+          thinkingLevel: ThinkingLevel.MINIMAL,
         },
       },
     });
