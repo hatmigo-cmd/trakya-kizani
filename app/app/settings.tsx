@@ -39,12 +39,14 @@ export default function Settings() {
         </Text>
         {loaded && <HumorLevelPicker value={level} onChange={handleChange} />}
 
-        <Text style={[styles.sectionTitle, styles.sectionSpacing]}>Yakında</Text>
+        <Text style={[styles.sectionTitle, styles.sectionSpacing]}>Sesli Sohbet</Text>
         <View style={styles.futureCard}>
-          <Text style={styles.futureTitle}>Sesli Konuşma</Text>
+          <Text style={styles.futureTitle}>Kızan artık dilinden düşmüyor! 🎤🔊</Text>
           <Text style={styles.futureBody}>
-            Trakya Kızanı ile sesli sohbet edebileceğin özellik üzerinde
-            çalışıyoruz. Mimari buna hazır, yakında burada olacak.
+            Sesli sohbet açık: sohbet ekranındaki mikrofona bas, derdini
+            konuşarak anlat - cevaplar da otomatik sesli okunur. Sesi
+            kısmak istersen üstteki hoparlör ikonuna, bir cevabı tekrar
+            dinlemek istersen o mesaj balonuna dokun.
           </Text>
         </View>
 
