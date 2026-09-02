@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist-persona-tests",
+    "noEmit": true
+  },
+  "include": ["src", "persona-tests"]
+}
