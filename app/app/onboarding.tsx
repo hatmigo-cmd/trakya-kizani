@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useAudioPlayer } from "expo-audio";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,9 +11,12 @@ import { folk, radius, spacing, typography } from "../lib/theme";
 import type { HumorLevel } from "../types/chat";
 
 const mascotPhoto = require("../assets/images/mascot-hero.jpg");
+const welcomeMusic = require("../assets/sounds/welcome.mp3");
 
 export default function Onboarding() {
   const [level, setLevel] = useState<HumorLevel>(2);
+  const player = useAudioPlayer(welcomeMusic);
+  const musicStartedRef = useRef(false);
 
   // Daha önce bir seviye seçilmişse (bu ekran artık her girişte gösterildiği
   // için) o seviye seçili gelsin, kullanıcı her seferinde 2'den başlamasın.
@@ -20,7 +24,42 @@ export default function Onboarding() {
     getDefaultHumorLevel().then(setLevel);
   }, []);
 
+  // Karşılama/mod seçim ekranında Trakya oyun havası çalsın - kullanıcı bir
+  // mod seçince (handleLevelChange) susturuluyor. Web'de tarayıcılar
+  // kullanıcı etkileşimi olmadan sesli oynatmayı engelleyebiliyor; bu
+  // yüzden hem mount'ta hem de ekrana ilk dokunuşta play() deneniyor
+  // (zaten çalıyorsa bunun bir etkisi olmuyor).
+  useEffect(() => {
+    player.loop = true;
+    try {
+      player.play();
+    } catch {
+      // Tarayıcı otomatik oynatmayı engellemiş olabilir - ilk dokunuşta
+      // tekrar denenecek (aşağıdaki tryStartMusic).
+    }
+    return () => {
+      player.pause();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function tryStartMusic() {
+    if (musicStartedRef.current) return;
+    musicStartedRef.current = true;
+    try {
+      player.play();
+    } catch {
+      // yoksay
+    }
+  }
+
+  function handleLevelChange(newLevel: HumorLevel) {
+    setLevel(newLevel);
+    player.pause();
+  }
+
   async function handleStart() {
+    player.pause();
     await setDefaultHumorLevel(level);
     await setOnboardingDone();
     router.replace("/chat/new");
@@ -29,7 +68,7 @@ export default function Onboarding() {
   return (
     <LinearGradient colors={[folk.bg900, folk.bg800]} style={styles.gradient}>
       <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerStyle={styles.content} onTouchStart={tryStartMusic}>
           <View style={styles.topRow}>
             <NazarIcon size={28} />
             <View style={styles.brandTag}>
@@ -60,7 +99,7 @@ export default function Onboarding() {
           <Text style={styles.sectionHint}>
             İstediğin zaman ayarlardan değiştirebilirsin.
           </Text>
-          <HumorLevelPicker value={level} onChange={setLevel} />
+          <HumorLevelPicker value={level} onChange={handleLevelChange} />
 
           <Text style={styles.footNote}>Hoş geldin gardaş, kolay gelsin!</Text>
         </ScrollView>
