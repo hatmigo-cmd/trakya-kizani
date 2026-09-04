@@ -139,6 +139,55 @@ export function SunflowerIcon({ size = 40 }: IconProps) {
   );
 }
 
+interface DancerIconProps extends IconProps {
+  /** true verilirse figür aynalanır - iki tanesi yan yana bakışık dans eder. */
+  mirror?: boolean;
+}
+
+/** Roman havası oynayan kızan - kollar havada, mendil sallıyor. */
+export function DancerIcon({ size = 32, mirror = false }: DancerIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 32">
+      <G transform={mirror ? "translate(24,0) scale(-1,1)" : undefined}>
+        <Circle cx="12" cy="5" r="3.4" fill="#E3A96B" />
+        <Path
+          d="M8 9 C8 9 6 11 5 15 C4.4 17.2 5.6 18 7 17.4 C7 17.4 6.4 20 8.4 21.6 L9.4 15.4 L12 13.6 L14.6 15.4 L15.6 21.6 C17.6 20 17 17.4 17 17.4 C18.4 18 19.6 17.2 19 15 C18 11 16 9 16 9 C14.8 8.2 13.4 7.8 12 7.8 C10.6 7.8 9.2 8.2 8 9 Z"
+          fill="#B23B2E"
+        />
+        <Path
+          d="M8 9 C6 8 3.6 8.6 2.4 6.6"
+          stroke="#B23B2E"
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          fill="none"
+        />
+        <Circle cx="2" cy="6" r="1.4" fill="#F4E4C9" />
+        <Path
+          d="M16 9 C18 10.4 19.6 12.6 21 12.2"
+          stroke="#B23B2E"
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          fill="none"
+        />
+        <Path
+          d="M9.4 21.6 C8.6 24.4 7.4 26 6 27.6"
+          stroke="#3B2418"
+          strokeWidth={2.4}
+          strokeLinecap="round"
+          fill="none"
+        />
+        <Path
+          d="M14.6 21.6 C16.2 23.6 18 24.6 19.4 24"
+          stroke="#3B2418"
+          strokeWidth={2.4}
+          strokeLinecap="round"
+          fill="none"
+        />
+      </G>
+    </Svg>
+  );
+}
+
 /** Kızan maskotu - kasketli, bıyıklı düz vektör yüz. */
 export function KizanMascotIcon({ size = 96 }: IconProps) {
   return (

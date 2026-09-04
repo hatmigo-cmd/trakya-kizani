@@ -5,7 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HumorLevelPicker } from "../components/HumorLevelPicker";
-import { NazarIcon, SunflowerIcon } from "../components/icons/TrakyaIcons";
+import { DancerIcon, NazarIcon, SunflowerIcon } from "../components/icons/TrakyaIcons";
 import { getDefaultHumorLevel, setDefaultHumorLevel, setOnboardingDone } from "../lib/storage";
 import { folk, radius, spacing, typography } from "../lib/theme";
 import type { HumorLevel } from "../types/chat";
@@ -89,6 +89,12 @@ export default function Onboarding() {
               asistan değil, laf sokan ama seni gerçekten dinleyen bir kızan
               gibi.
             </Text>
+          </View>
+
+          <View style={styles.musicRow}>
+            <DancerIcon size={30} />
+            <Text style={styles.musicRowText}>Roman havası çalıyor, kulak ver!</Text>
+            <DancerIcon size={30} mirror />
           </View>
 
           <View style={styles.sectionHeader}>
@@ -177,6 +183,18 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     lineHeight: 22,
     textAlign: "center",
+  },
+  musicRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    marginTop: spacing.lg,
+  },
+  musicRowText: {
+    ...typography.caption,
+    color: folk.gold,
+    fontWeight: "700",
   },
   sectionHeader: {
     flexDirection: "row",
