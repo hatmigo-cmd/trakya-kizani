@@ -11,6 +11,7 @@ import { folk, radius, spacing, typography } from "../lib/theme";
 import type { HumorLevel } from "../types/chat";
 
 const mascotPhoto = require("../assets/images/mascot-hero.jpg");
+const farmScenePhoto = require("../assets/images/farm-scene.jpg");
 const welcomeMusic = require("../assets/sounds/welcome.mp3");
 
 export default function Onboarding() {
@@ -131,6 +132,8 @@ export default function Onboarding() {
             </Text>
           </View>
 
+          <Image source={farmScenePhoto} style={styles.farmScene} resizeMode="cover" />
+
           <Pressable style={styles.musicRow} onPress={tryStartMusic}>
             <Animated.View style={dancerStyle1}>
               <DancerIcon size={30} />
@@ -231,6 +234,14 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     lineHeight: 22,
     textAlign: "center",
+  },
+  farmScene: {
+    width: "100%",
+    aspectRatio: 1248 / 832,
+    borderRadius: radius.lg,
+    marginTop: spacing.lg,
+    borderWidth: 1,
+    borderColor: folk.panelLine,
   },
   musicRow: {
     flexDirection: "row",
