@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -17,6 +17,54 @@ export default function Onboarding() {
   const [level, setLevel] = useState<HumorLevel>(2);
   const player = useAudioPlayer(welcomeMusic);
   const status = useAudioPlayerStatus(player);
+  const dance1 = useRef(new Animated.Value(0)).current;
+  const dance2 = useRef(new Animated.Value(0)).current;
+
+  // İki dans figürü karşılıklı zıplayıp hafif dönerek "oynuyor" - biri
+  // yukarı çıkarken diğeri aşağı insin diye ikinci figürün animasyonu
+  // faz farkıyla (delay) başlatılıyor.
+  useEffect(() => {
+    const makeLoop = (value: Animated.Value, delay: number) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.timing(value, {
+            toValue: 1,
+            duration: 380,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.timing(value, {
+            toValue: 0,
+            duration: 380,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+        ])
+      );
+    const loop1 = makeLoop(dance1, 0);
+    const loop2 = makeLoop(dance2, 380);
+    loop1.start();
+    loop2.start();
+    return () => {
+      loop1.stop();
+      loop2.stop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const dancerStyle1 = {
+    transform: [
+      { translateY: dance1.interpolate({ inputRange: [0, 1], outputRange: [0, -7] }) },
+      { rotate: dance1.interpolate({ inputRange: [0, 1], outputRange: ["-8deg", "8deg"] }) },
+    ],
+  };
+  const dancerStyle2 = {
+    transform: [
+      { translateY: dance2.interpolate({ inputRange: [0, 1], outputRange: [0, -7] }) },
+      { rotate: dance2.interpolate({ inputRange: [0, 1], outputRange: ["8deg", "-8deg"] }) },
+    ],
+  };
 
   // Daha önce bir seviye seçilmişse (bu ekran artık her girişte gösterildiği
   // için) o seviye seçili gelsin, kullanıcı her seferinde 2'den başlamasın.
@@ -84,13 +132,17 @@ export default function Onboarding() {
           </View>
 
           <Pressable style={styles.musicRow} onPress={tryStartMusic}>
-            <DancerIcon size={30} />
+            <Animated.View style={dancerStyle1}>
+              <DancerIcon size={30} />
+            </Animated.View>
             <Text style={styles.musicRowText}>
               {status.playing
                 ? "Roman havası çalıyor, kulak ver!"
                 : "🔊 Sesi açmak için dokun"}
             </Text>
-            <DancerIcon size={30} mirror />
+            <Animated.View style={dancerStyle2}>
+              <DancerIcon size={30} mirror />
+            </Animated.View>
           </Pressable>
 
           <View style={styles.sectionHeader}>
