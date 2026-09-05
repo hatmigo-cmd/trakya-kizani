@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useAudioPlayer } from "expo-audio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,7 +16,7 @@ const welcomeMusic = require("../assets/sounds/welcome.mp3");
 export default function Onboarding() {
   const [level, setLevel] = useState<HumorLevel>(2);
   const player = useAudioPlayer(welcomeMusic);
-  const musicStartedRef = useRef(false);
+  const status = useAudioPlayerStatus(player);
 
   // Daha önce bir seviye seçilmişse (bu ekran artık her girişte gösterildiği
   // için) o seviye seçili gelsin, kullanıcı her seferinde 2'den başlamasın.
@@ -27,16 +27,12 @@ export default function Onboarding() {
   // Karşılama/mod seçim ekranında Trakya oyun havası çalsın - kullanıcı bir
   // mod seçince (handleLevelChange) susturuluyor. Web'de tarayıcılar
   // kullanıcı etkileşimi olmadan sesli oynatmayı engelleyebiliyor; bu
-  // yüzden hem mount'ta hem de ekrana ilk dokunuşta play() deneniyor
-  // (zaten çalıyorsa bunun bir etkisi olmuyor).
+  // yüzden hem mount'ta hem de ekrana yapılan İLK dokunuşta (tryStartMusic)
+  // tekrar deneniyor - status.playing gerçek durumu yansıttığı için
+  // otomatik oynatma engellendiyse aşağıdaki "🔊 Sesi Aç" ipucu gösteriliyor.
   useEffect(() => {
     player.loop = true;
-    try {
-      player.play();
-    } catch {
-      // Tarayıcı otomatik oynatmayı engellemiş olabilir - ilk dokunuşta
-      // tekrar denenecek (aşağıdaki tryStartMusic).
-    }
+    player.play();
     return () => {
       player.pause();
     };
@@ -44,12 +40,8 @@ export default function Onboarding() {
   }, []);
 
   function tryStartMusic() {
-    if (musicStartedRef.current) return;
-    musicStartedRef.current = true;
-    try {
+    if (!status.playing) {
       player.play();
-    } catch {
-      // yoksay
     }
   }
 
@@ -91,11 +83,15 @@ export default function Onboarding() {
             </Text>
           </View>
 
-          <View style={styles.musicRow}>
+          <Pressable style={styles.musicRow} onPress={tryStartMusic}>
             <DancerIcon size={30} />
-            <Text style={styles.musicRowText}>Roman havası çalıyor, kulak ver!</Text>
+            <Text style={styles.musicRowText}>
+              {status.playing
+                ? "Roman havası çalıyor, kulak ver!"
+                : "🔊 Sesi açmak için dokun"}
+            </Text>
             <DancerIcon size={30} mirror />
-          </View>
+          </Pressable>
 
           <View style={styles.sectionHeader}>
             <View style={styles.sectionRule} />
